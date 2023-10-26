@@ -1,0 +1,17 @@
+{
+  "welcomeFile": "index.html",
+  "authenticationMethod": "route", 
+  "routes": [
+    {
+      "source": "^/managed/(.*)$",
+      "authenticationType": "xsuaa",
+      "destination": "srv-api",
+      "csrfProtection": false
+    },
+    {
+      "source": "^/(.*)$",
+      "target": "$1",
+      "localDir": "employeemgmt/webapp"
+    }
+  ]
+}

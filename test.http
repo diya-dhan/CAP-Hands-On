@@ -1,0 +1,23 @@
+
+GET http://localhost:4004/managed/Employee?
+
+###
+
+GET http://localhost:4004/managed/Department(I454T)?
+
+###
+
+POST http://localhost:4004/managed/Employee
+Content-Type: application/json
+
+    {
+      "emp_id": "3",
+      "first_name": "Jake",
+      "last_name": "B",
+      "email": "jake@gmail.com",
+      "phone_number": "3564564563",
+      "department_dept_id": "I454T",
+      "manager": "Ross",
+      "password": "err234",
+      "role": "Developer"
+    }

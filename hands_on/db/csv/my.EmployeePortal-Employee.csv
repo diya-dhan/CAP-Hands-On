@@ -1,0 +1,3 @@
+emp_id;first_name;last_name;email;phone_number;department_dept_id;manager;role
+"1";"Diya";"D";"diya@gmail.com";"123456789";"I581T";"David";"Developer"
+"2";"David";"W";"david@gmail.com";"534534534";"I581T";"Jim";"Manager"

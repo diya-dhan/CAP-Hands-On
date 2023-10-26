@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="4.0" xmlns:edmx="http://docs.oasis-open.org/odata/ns/edmx">
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Capabilities.V1.xml">
+        <edmx:Include Alias="Capabilities" Namespace="Org.OData.Capabilities.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/Common.xml">
+        <edmx:Include Alias="Common" Namespace="com.sap.vocabularies.Common.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://oasis-tcs.github.io/odata-vocabularies/vocabularies/Org.OData.Core.V1.xml">
+        <edmx:Include Alias="Core" Namespace="Org.OData.Core.V1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/HTML5.xml">
+        <edmx:Include Alias="HTML5" Namespace="com.sap.vocabularies.HTML5.v1"/>
+    </edmx:Reference>
+    <edmx:Reference Uri="https://sap.github.io/odata-vocabularies/vocabularies/UI.xml">
+        <edmx:Include Alias="UI" Namespace="com.sap.vocabularies.UI.v1"/>
+    </edmx:Reference>
+    <edmx:DataServices>
+        <Schema Namespace="ManagedService" xmlns="http://docs.oasis-open.org/odata/ns/edm">
+            <EntityContainer Name="EntityContainer">
+                <EntitySet Name="Employee" EntityType="ManagedService.Employee">
+                    <NavigationPropertyBinding Path="department" Target="Department"/>
+                    <NavigationPropertyBinding Path="SiblingEntity" Target="Employee"/>
+                </EntitySet>
+                <EntitySet Name="Department" EntityType="ManagedService.Department"/>
+            </EntityContainer>
+            <EntityType Name="Employee">
+                <Key>
+                    <PropertyRef Name="emp_id"/>
+                    <PropertyRef Name="IsActiveEntity"/>
+                </Key>
+                <Property Name="emp_id" Type="Edm.String" Nullable="false"/>
+                <Property Name="first_name" Type="Edm.String"/>
+                <Property Name="last_name" Type="Edm.String"/>
+                <Property Name="email" Type="Edm.String"/>
+                <Property Name="phone_number" Type="Edm.String"/>
+                <NavigationProperty Name="department" Type="ManagedService.Department">
+                    <ReferentialConstraint Property="department_dept_id" ReferencedProperty="dept_id"/>
+                </NavigationProperty>
+                <Property Name="department_dept_id" Type="Edm.String"/>
+                <Property Name="manager" Type="Edm.String"/>
+                <Property Name="role" Type="Edm.String"/>
+                <Property Name="IsActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="true"/>
+                <Property Name="HasActiveEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <Property Name="HasDraftEntity" Type="Edm.Boolean" Nullable="false" DefaultValue="false"/>
+                <NavigationProperty Name="DraftAdministrativeData" Type="ManagedService.DraftAdministrativeData" ContainsTarget="true"/>
+                <NavigationProperty Name="SiblingEntity" Type="ManagedService.Employee"/>
+            </EntityType>
+            <EntityType Name="Department">
+                <Key>
+                    <PropertyRef Name="dept_id"/>
+                </Key>
+                <Property Name="dept_id" Type="Edm.String" Nullable="false"/>
+                <Property Name="dept_name" Type="Edm.String"/>
+                <Property Name="building_no" Type="Edm.Int32"/>
+            </EntityType>
+            <EntityType Name="DraftAdministrativeData">
+                <Key>
+                    <PropertyRef Name="DraftUUID"/>
+                </Key>
+                <Property Name="DraftUUID" Type="Edm.Guid" Nullable="false"/>
+                <Property Name="CreationDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="CreatedByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="DraftIsCreatedByMe" Type="Edm.Boolean"/>
+                <Property Name="LastChangeDateTime" Type="Edm.DateTimeOffset" Precision="7"/>
+                <Property Name="LastChangedByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="InProcessByUser" Type="Edm.String" MaxLength="256"/>
+                <Property Name="DraftIsProcessedByMe" Type="Edm.Boolean"/>
+            </EntityType>
+            <Action Name="draftPrepare" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="ManagedService.Employee"/>
+                <Parameter Name="SideEffectsQualifier" Type="Edm.String"/>
+                <ReturnType Type="ManagedService.Employee"/>
+            </Action>
+            <Action Name="draftActivate" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="ManagedService.Employee"/>
+                <ReturnType Type="ManagedService.Employee"/>
+            </Action>
+            <Action Name="draftEdit" IsBound="true" EntitySetPath="in">
+                <Parameter Name="in" Type="ManagedService.Employee"/>
+                <Parameter Name="PreserveChanges" Type="Edm.Boolean"/>
+                <ReturnType Type="ManagedService.Employee"/>
+            </Action>
+            <Annotations Target="ManagedService.Employee">
+                <Annotation Term="UI.HeaderInfo">
+                    <Record Type="UI.HeaderInfoType">
+                        <PropertyValue Property="TypeName" String="Employee"/>
+                        <PropertyValue Property="TypeNamePlural" String="Employees"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.SelectionFields">
+                    <Collection>
+                        <PropertyPath>emp_id</PropertyPath>
+                        <PropertyPath>last_name</PropertyPath>
+                        <PropertyPath>department_dept_id</PropertyPath>
+                        <PropertyPath>manager</PropertyPath>
+                        <PropertyPath>role</PropertyPath>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.LineItem">
+                    <Collection>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="emp_id"/>
+                            <Annotation Term="HTML5.CssDefaults">
+                                <Record Type="HTML5.CssDefaultsType">
+                                    <PropertyValue Property="width" String="16.66%"/>
+                                </Record>
+                            </Annotation>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="first_name"/>
+                            <Annotation Term="HTML5.CssDefaults">
+                                <Record Type="HTML5.CssDefaultsType">
+                                    <PropertyValue Property="width" String="16.66%"/>
+                                </Record>
+                            </Annotation>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="last_name"/>
+                            <Annotation Term="HTML5.CssDefaults">
+                                <Record Type="HTML5.CssDefaultsType">
+                                    <PropertyValue Property="width" String="16.66%"/>
+                                </Record>
+                            </Annotation>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="email"/>
+                            <Annotation Term="HTML5.CssDefaults">
+                                <Record Type="HTML5.CssDefaultsType">
+                                    <PropertyValue Property="width" String="16.66%"/>
+                                </Record>
+                            </Annotation>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="department/dept_name"/>
+                            <Annotation Term="HTML5.CssDefaults">
+                                <Record Type="HTML5.CssDefaultsType">
+                                    <PropertyValue Property="width" String="16.66%"/>
+                                </Record>
+                            </Annotation>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="manager"/>
+                            <Annotation Term="HTML5.CssDefaults">
+                                <Record Type="HTML5.CssDefaultsType">
+                                    <PropertyValue Property="width" String="16.66%"/>
+                                </Record>
+                            </Annotation>
+                        </Record>
+                        <Record Type="UI.DataField">
+                            <PropertyValue Property="Value" Path="role"/>
+                            <Annotation Term="HTML5.CssDefaults">
+                                <Record Type="HTML5.CssDefaultsType">
+                                    <PropertyValue Property="width" String="16.66%"/>
+                                </Record>
+                            </Annotation>
+                        </Record>
+                    </Collection>
+                </Annotation>
+                <Annotation Term="UI.FieldGroup" Qualifier="GeneratedGroup1">
+                    <Record Type="UI.FieldGroupType">
+                        <PropertyValue Property="Data">
+                            <Collection>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="emp_id"/>
+                                    <PropertyValue Property="Value" Path="emp_id"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="first_name"/>
+                                    <PropertyValue Property="Value" Path="first_name"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="last_name"/>
+                                    <PropertyValue Property="Value" Path="last_name"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="email"/>
+                                    <PropertyValue Property="Value" Path="email"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="phone_number"/>
+                                    <PropertyValue Property="Value" Path="phone_number"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="department_dept_id"/>
+                                    <PropertyValue Property="Value" Path="department_dept_id"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="manager"/>
+                                    <PropertyValue Property="Value" Path="manager"/>
+                                </Record>
+                                <Record Type="UI.DataField">
+                                    <PropertyValue Property="Label" String="role"/>
+                                    <PropertyValue Property="Value" Path="role"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="UI.Facets">
+                    <Collection>
+                        <Record Type="UI.ReferenceFacet">
+                            <PropertyValue Property="ID" String="GeneratedFacet1"/>
+                            <PropertyValue Property="Label" String="General Information"/>
+                            <PropertyValue Property="Target" AnnotationPath="@UI.FieldGroup#GeneratedGroup1"/>
+                        </Record>
+                    </Collection>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ManagedService.EntityContainer/Employee">
+                <Annotation Term="Common.DraftRoot">
+                    <Record Type="Common.DraftRootType">
+                        <PropertyValue Property="ActivationAction" String="ManagedService.draftActivate"/>
+                        <PropertyValue Property="EditAction" String="ManagedService.draftEdit"/>
+                        <PropertyValue Property="PreparationAction" String="ManagedService.draftPrepare"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.InsertRestrictions">
+                    <Record Type="Capabilities.InsertRestrictionsType">
+                        <PropertyValue Property="Insertable" Bool="true"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.DeleteRestrictions">
+                    <Record Type="Capabilities.DeleteRestrictionsType">
+                        <PropertyValue Property="Deletable" Bool="true"/>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Capabilities.UpdateRestrictions">
+                    <Record Type="Capabilities.UpdateRestrictionsType">
+                        <PropertyValue Property="Updatable" Bool="true"/>
+                    </Record>
+                </Annotation>
+            </Annotations>
+            <Annotations Target="ManagedService.Employee/emp_id">
+                <Annotation Term="Common.Label" String="Employee ID"/>
+            </Annotations>
+            <Annotations Target="ManagedService.Employee/first_name">
+                <Annotation Term="Common.Label" String="First Name"/>
+            </Annotations>
+            <Annotations Target="ManagedService.Employee/last_name">
+                <Annotation Term="Common.Label" String="Last Name"/>
+            </Annotations>
+            <Annotations Target="ManagedService.Employee/email">
+                <Annotation Term="Common.Label" String="Email Address"/>
+            </Annotations>
+            <Annotations Target="ManagedService.Employee/department">
+                <Annotation Term="Common.Label" String="Department"/>
+            </Annotations>
+            <Annotations Target="ManagedService.Employee/department_dept_id">
+                <Annotation Term="Common.Label" String="Department"/>
+                <Annotation Term="Common.ValueList">
+                    <Record Type="Common.ValueListType">
+                        <PropertyValue Property="Label" String="Department"/>
+                        <PropertyValue Property="CollectionPath" String="Department"/>
+                        <PropertyValue Property="Parameters">
+                            <Collection>
+                                <Record Type="Common.ValueListParameterInOut">
+                                    <PropertyValue Property="LocalDataProperty" PropertyPath="department_dept_id"/>
+                                    <PropertyValue Property="ValueListProperty" String="dept_id"/>
+                                </Record>
+                                <Record Type="Common.ValueListParameterDisplayOnly">
+                                    <PropertyValue Property="ValueListProperty" String="dept_name"/>
+                                </Record>
+                            </Collection>
+                        </PropertyValue>
+                    </Record>
+                </Annotation>
+                <Annotation Term="Common.ValueListWithFixedValues" Bool="true"/>
+                <Annotation Term="Common.FieldControl" EnumMember="Common.FieldControlType/Mandatory"/>
+            </Annotations>
+            <Annotations Target="ManagedService.Employee/manager">
+                <Annotation Term="Common.Label" String="Reporting To"/>
+            </Annotations>
+            <Annotations Target="ManagedService.Employee/role">
+                <Annotation Term="Common.Label" String="Role"/>
+            </Annotations>
+            <Annotations Target="ManagedService.Employee/IsActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="ManagedService.Employee/HasActiveEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="ManagedService.Employee/HasDraftEntity">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="ManagedService.Employee/DraftAdministrativeData">
+                <Annotation Term="UI.Hidden" Bool="true"/>
+            </Annotations>
+            <Annotations Target="ManagedService.Department/dept_id">
+                <Annotation Term="Common.Label" String="Department ID"/>
+            </Annotations>
+            <Annotations Target="ManagedService.Department/dept_name">
+                <Annotation Term="Common.Label" String="Department Name"/>
+            </Annotations>
+            <Annotations Target="ManagedService.DraftAdministrativeData">
+                <Annotation Term="Common.Label" String="{i18n>Draft_DraftAdministrativeData}"/>
+                </Annotations>
+                <Annotations Target="ManagedService.DraftAdministrativeData/DraftUUID">
+                    <Annotation Term="UI.Hidden" Bool="true"/>
+                    <Annotation Term="Common.Label" String="{i18n>Draft_DraftUUID}"/>
+                    </Annotations>
+                    <Annotations Target="ManagedService.DraftAdministrativeData/CreationDateTime">
+                        <Annotation Term="Common.Label" String="{i18n>Draft_CreationDateTime}"/>
+                        </Annotations>
+                        <Annotations Target="ManagedService.DraftAdministrativeData/CreatedByUser">
+                            <Annotation Term="Common.Label" String="{i18n>Draft_CreatedByUser}"/>
+                            </Annotations>
+                            <Annotations Target="ManagedService.DraftAdministrativeData/DraftIsCreatedByMe">
+                                <Annotation Term="UI.Hidden" Bool="true"/>
+                                <Annotation Term="Common.Label" String="{i18n>Draft_DraftIsCreatedByMe}"/>
+                                </Annotations>
+                                <Annotations Target="ManagedService.DraftAdministrativeData/LastChangeDateTime">
+                                    <Annotation Term="Common.Label" String="{i18n>Draft_LastChangeDateTime}"/>
+                                    </Annotations>
+                                    <Annotations Target="ManagedService.DraftAdministrativeData/LastChangedByUser">
+                                        <Annotation Term="Common.Label" String="{i18n>Draft_LastChangedByUser}"/>
+                                        </Annotations>
+                                        <Annotations Target="ManagedService.DraftAdministrativeData/InProcessByUser">
+                                            <Annotation Term="Common.Label" String="{i18n>Draft_InProcessByUser}"/>
+                                            </Annotations>
+                                            <Annotations Target="ManagedService.DraftAdministrativeData/DraftIsProcessedByMe">
+                                                <Annotation Term="UI.Hidden" Bool="true"/>
+                                                <Annotation Term="Common.Label" String="{i18n>Draft_DraftIsProcessedByMe}"/>
+                                                </Annotations>
+                                            </Schema>
+                                        </edmx:DataServices>
+                                    </edmx:Edmx>

@@ -1,0 +1,108 @@
+_schema-version: '3.1'
+ID: hands_on
+version: 1.0.0
+description: "A simple CAP project."
+parameters:
+  enable-parallel-deployments: true
+build-parameters:
+  before-all:
+    - builder: custom
+      commands:
+        - npm install 
+        # - npx -p @sap/cds-dk cds build --production
+modules:
+  - name: hands_on-srv
+    type: nodejs
+    path: gen/srv
+    parameters:
+      buildpack: nodejs_buildpack
+    build-parameters:
+      builder: npm-ci
+    provides:
+      - name: srv-api # required by consumers of CAP services (e.g. approuter)
+        properties:
+          srv-url: ${default-url}
+    requires:
+      - name: fa-aem-uaa
+      - name: fa-aem-db
+
+  - name: hands_on
+    type: approuter.nodejs
+    path: app/employeemgmt # from cds.env.folders. Consider also cds.env.build.target -> gen/app
+    parameters:
+      # keep-existing-routes: true
+      disk-quota: 256M
+      memory: 256M
+    requires:
+      - name: fa-html5-repo-runtime
+      - name: fa-aem-uaa
+      - name: fa-destination-service
+        group: destinations
+        properties:
+          name: ui5 # must be used in xs-app.json as well
+          url: https://ui5.sap.com
+          forwardAuthToken: false
+      - name: srv-api
+        group: destinations
+        properties:
+          name: srv-binding # must be used in xs-app.json as well
+          url: ~{srv-url}
+          forwardAuthToken: true
+
+  - name: hands_on-db-deployer
+    type: hdb
+    path: gen/db
+    parameters:
+      buildpack: nodejs_buildpack
+    requires:
+      - name: fa-aem-db
+
+resources:
+# --------------------- HANA SERVICE -------------------------
+  - name: fa-aem-db
+    type: com.sap.xs.hdi-container
+    parameters:
+      service: hana
+      service-plan: hdi-shared
+
+# --------------------- XSUAA SERVICE ------------------------
+  - name: fa-aem-uaa
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        tenant-mode: dedicated
+        xsappname: fa-${space-guid}
+        oauth2-configuration:
+          redirect-uris:
+            - "https://*.cfapps.eu10-004.hana.ondemand.com/**"
+            - "https://*.cfapps.eu10.hana.ondemand.com/**"
+      service: xsuaa
+      service-plan: application
+
+# --------------------- HTML5 REPO ---------------------------
+  - name: fa-html5-repo-runtime
+    type: org.cloudfoundry.managed-service
+    parameters:
+      service: html5-apps-repo
+      service-plan: app-runtime
+
+# --------------------- DESTINATION ---------------------------
+  - name: fa-destination-service
+    type: org.cloudfoundry.managed-service
+    parameters:
+      config:
+        HTML5Runtime_enabled: false
+        init_data:
+          instance:
+            destinations:
+              - Authentication: NoAuthentication
+                Name: ui5
+                ProxyType: Internet
+                Type: HTTP
+                URL: https://ui5.sap.com
+            existing_destinations_policy: update
+        version: 1.0.0
+      service: destination
+      service-name: fa-destination-service
+      service-plan: lite
+

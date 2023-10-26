@@ -1,0 +1,26 @@
+{
+	"[development]":{
+	"auth": {
+		"passport": {
+			"strategy": "mock",
+			"users": {
+				"diya": {
+					"password": "1234",
+					"ID": "diya",
+					"roles": [
+						"authenticated-user"
+					]
+				},
+
+				"alice": {
+					"password": "1234",
+					"ID": "alice",
+					"roles": [
+						"user"
+					]
+				}
+			}
+		}
+	}	
+	}
+}

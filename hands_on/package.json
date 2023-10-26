@@ -1,0 +1,52 @@
+{
+  "name": "hands_on",
+  "version": "1.0.0",
+  "description": "A simple CAP project.",
+  "repository": "<Add your repository here>",
+  "license": "UNLICENSED",
+  "private": true,
+  "dependencies": {
+    "@sap/cds": "^6.8.1",
+    "@sap/xsenv": "^3.4.0",
+    "@sap/xssec": "^3",
+    "cookie-session": "^2.0.0",
+    "express": "^4",
+    "hdb": "^0.19.0",
+    "passport": "^0"
+  },
+  "devDependencies": {
+    "@sap/ux-specification": "^1.108.5",
+    "rimraf": "^3.0.2",
+    "sqlite3": "^5"
+  },
+  "scripts": {
+    "start": "cds-serve",
+    "watch-employee": "cds watch --open employee/webapp/index.html?sap-ui-xx-viewCache=false",
+    "watch-employeemgmt": "cds watch --open employeemgmt/webapp/index.html?sap-ui-xx-viewCache=false",
+    "undeploy": "cf undeploy hands_on --delete-services --delete-service-keys --delete-service-brokers",
+    "build": "rimraf resources mta_archives && mbt build --mtar archive ",
+    "deploy": "cf deploy mta_archives/archive.mtar --retries 1"
+  },
+  "sapux": [
+    "app/employee",
+    "app/employeemgmt",
+    "app/employeemgmt"
+  ],
+  "cds": {
+    "requires": {
+      "auth": {
+        "kind": "xsuaa"
+      },
+      "[hybrid]": {
+        "db": "hana-cloud"
+      },
+      "db": "sql",
+      "[production]": {
+        "db": "hana-cloud",
+        "auth": {
+          "kind": "xsuaa"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,1 @@
+using ManagedService as service from '../../srv/service';
